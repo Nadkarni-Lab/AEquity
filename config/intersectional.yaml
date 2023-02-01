@@ -1,0 +1,18 @@
+datasets: intersection-ethnicity-ses 
+metric_type: sAUC 
+experiment: MIMIC 
+models: tlAE2,tlFCN2 
+zoo_models: alexnet 
+root_dir: ./data 
+n_bootstraps: 50 
+shuffle: True
+batch_size: 1 
+n_workers: 0 
+max_sample_size: 50000 
+frequency: True
+stratified: True
+start_seed: "0"
+initial_weights_dir: ./weights
+out_data_path: ./data/SES/data.tsv
+out_metadata_path: ./data/SES/metadata.tsv \
+out_prediction_path: ./data/SES/predictions.tsv

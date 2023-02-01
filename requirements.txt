@@ -1,0 +1,6 @@
+sklearn
+torch
+scipy
+torchvision
+pandas
+cnnMCSE

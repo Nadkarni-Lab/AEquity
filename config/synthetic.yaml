@@ -1,0 +1,14 @@
+datasets: MNIST 
+metric_type: sAUC 
+models: A3,FCN 
+experiment: complexity 
+root_dir: ./data  
+n_bootstraps: 50 
+shuffle: True
+batch_size: 1 
+n_workers: 0 
+max_sample_size: 5000
+frequency: True
+stratified: True
+out_data_path: ./output/synthetic/data.tsv 
+out_metadata_path: ./output/synthetic/metadata.tsv

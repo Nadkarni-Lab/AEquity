@@ -1,0 +1,17 @@
+experiment: dissecting
+datasets: ethnicity 
+metric_type: sAUC 
+models: A3,FCN 
+input_dim: 149 
+root_dir: ./data 
+n_bootstraps: 30
+shuffle: True
+batch_size: 1 
+n_workers: 0 
+max_sample_size: 5000  
+frequency: True
+stratified: True
+initial_weights_dir: ./weights 
+out_data_path: ./dissecting/data.tsv
+out_metadata_path: ./dissecting/data/metadata.tsv
+out_prediction_path:  ./dissecting/data/predictions.tsv
