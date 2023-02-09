@@ -1,6 +1,18 @@
 # AEquitas
 Deep Learning Based Metric to Mitigate Dataset Bias. This repository will be used for the NIH NCATs challenge. 
 
+## Table of contents
+- [Summary](#summary)
+- [Introduction](#introduction)
+- [Principles](#the-principles-of-aequity)
+    - [Disentangling Biases](#aequity-to-disentangle-types-of-biases)
+- [Applications](#applying-aequity-to-real-world-data)
+    - [Predictive Bias](#predictive-bias-aequity-on-chest-x-ray-data)
+    - [Social Bias](#social-bias-applying-aequity-to-cost-utilization-data)
+- [Discussion](#discussion)
+- [Using this Repository](#using-this-repository)
+- [References](#references)
+
 
 ## Summary
 
@@ -27,7 +39,7 @@ Under most constraints, AEq values exhibit dataset-specific properties, and can 
 
 ![Figure2](img/Figure-2.png)
 
-## AEquity to disentangle types of biases. 
+### AEquity to disentangle types of biases. 
 
 We separate dataset biases into three distinct categories: sampling bias; complexity bias; and label bias. In sampling bias, a group is under-represented in the dataset and suffers from lower generalization performance in the resulting model. In complexity bias, a group exhibits a class label with greater complexity than another group. Subsequently, generalization performance on that group is worse than other groups for the same class. Third, label bias occurs when labels are placed incorrectly at different rates for different groups and can lead to increased misclassification errors for the affected group. 
 
