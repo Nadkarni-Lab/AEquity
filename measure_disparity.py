@@ -1,10 +1,10 @@
 import argparse
 import yaml
-from cnnMCSE.predict import batch_loop
+from cnnMCSE.predict import measure_disparity_custom
 
 
 def main(**config_kwargs):
-    batch_loop(**(config_kwargs))
+    measure_disparity_custom(**(config_kwargs))
 
 
 

@@ -1,0 +1,10 @@
+data_path: ./data/custom_data.tsv
+demographics_col: demographics
+outcome_cols: outcome_1, outcome_2, outcome_3
+exclude_cols: None
+out_data: ./output/data.tsv
+bootstraps: 10
+start_seed: 42
+input_dim: 149
+max_sample_size: 5000
+root_dir: ./weights
