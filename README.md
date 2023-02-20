@@ -1,4 +1,4 @@
-# AEquitas
+# AEquity
 Deep Learning Based Metric to Mitigate Dataset Bias. This repository will be used for the NIH NCATs challenge. 
 
 ## Table of contents
@@ -69,7 +69,7 @@ We replicated these findings in two additional datasets (NIH-CXR and CheXPert) a
 
 We conducted an analysis utilizing AEq to replicate the results and conclusions of the dataset provided by the authors of Obermeyer et al. We showed that racial bias in cost-predictive algorithms can propagate systemic forms of inequity in health care resource allocation. Using cost as the risk-derived metric, Black patients at a given risk score were considerably sicker than their white counterparts.
 
-We calculated the difference in AEq values between each race for each metric. The model demonstrated that when using active chronic conditions as the outcome metric, the difference in AEq between Black and white patients was not statistically significantly different from zero in the high-risk group (P = 0.22). In contrast, when using cost-based metrics such as avoidable costs and total costs, the difference in AEq between Black and white patients was significantly greater than 0 ($P_(total costs) = 6.49E-10$; $P_(avoidable costs) = 1.67E-10)$, consistent with generalizability differences across different races, which fits the definition of algorithmic bias.
+We calculated the difference in AEq values between each race for each metric. The model demonstrated that when using active chronic conditions as the outcome metric, the difference in AEq between Black and white patients was not statistically significantly different from zero in the high-risk group (P = 0.22). In contrast, when using cost-based metrics such as avoidable costs and total costs, the difference in AEq between Black and white patients was significantly greater than 0 $P_{total costs} = 6.49E-10$; $P_{avoidable costs} = 1.67E-10)$, consistent with generalizability differences across different races, which fits the definition of algorithmic bias.
 
 We found additionally that the differences in AEq across races of the low-risk groups were all significantly greater than 0 for each metric. We also observed that the differences in AEq were smaller when using active chronic conditions than avoidable costs or total costs, $(ANOVA, P = 1.59E-08)$.  
 
