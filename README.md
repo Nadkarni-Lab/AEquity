@@ -1,5 +1,5 @@
 # AEquity
-Deep Learning Based Metric to Mitigate Dataset Bias. This repository will be used for the NIH NCATs challenge. 
+Deep Learning Based Metric to Mitigate Dataset Bias. 
 
 ## Table of contents
 - [Summary](#summary)
@@ -59,7 +59,7 @@ We showed that AEq replicated the racial biases demonstrated by Seyyed-Kalantari
 
 Next, we examined pneumothorax, which occurs less frequently in Black individuals and for whom AEq is substantially higher than that for white individuals. The joint AEq is less than the AEq for each race, consistent with a sampling bias. The data-centric simulation with a diversified dataset was associated with an improvement in classifier performance for Black individuals (Figure 4d, middle pane). Finally, we looked at edema, where the joint AEq was higher than the AEq for either race, consistent with complexity bias. In this simulation, prioritizing data collection to include more chest radiographs from Black individuals was associated with a model that generalized better to Black patients (Figure 4d, right pane).
 
-![Figure4](img/Figure-4.png)
+![Figure4](img/Figure-4-V2.png)
 
 We replicated these findings in two additional datasets (NIH-CXR and CheXPert) and also with respect to gender, age and insurance status. Additionally, we demonstrated that our method can be applied to intersectional analyses wherein gender, age and insurance status are considered in addition to race. Mitigation of bias by our method was robust using a variety of traditional fairness measures, such as false positive rate, precision and false discovery rate.
 
@@ -73,7 +73,7 @@ We calculated the difference in AEq values between each race for each metric. Th
 
 We found additionally that the differences in AEq across races of the low-risk groups were all significantly greater than 0 for each metric. We also observed that the differences in AEq were smaller when using active chronic conditions than avoidable costs or total costs, $(ANOVA, P = 1.59E-08)$.  
 
-![Figure6](img/Figure-5.png)
+![Figure6](img/Figure-5-V2.png)
 
 ### Discussion
 
@@ -94,8 +94,8 @@ pandas
 
 ```{bash}
 pip install requirements.txt
+python setup.py install. 
 ```
-And are also privately sourced: mainly cnnMCSE. 
 
 2. Setup config file in a config.yaml file. 
 ```{yaml}

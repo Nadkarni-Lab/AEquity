@@ -1,6 +1,6 @@
 import argparse
 import yaml
-from cnnMCSE.predict import measure_disparity_custom
+from aequity.predict import measure_disparity_custom
 
 
 def main(**config_kwargs):

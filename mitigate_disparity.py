@@ -3,7 +3,7 @@ import argparse
 import yaml
 import numpy as np
 import pandas as pd
-from cnnMCSE.predict import mitigate_disparity_custom
+from aequity.predict import mitigate_disparity_custom
 
 
 

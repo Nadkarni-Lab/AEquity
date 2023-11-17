@@ -3,4 +3,3 @@ torch
 scipy
 torchvision
 pandas
-cnnMCSE
