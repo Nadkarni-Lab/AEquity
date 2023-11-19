@@ -6,13 +6,10 @@ import pandas as pd
 
 from sklearn import metrics
 from sklearn.preprocessing import label_binarize
-# from aequitas.group import Group
-# from aequitas.bias import Bias
-# from aequitas.fairness import Fairness
-# from aequitas.plotting import Plot
-
-
-from cnnMCSE.utils.zoo import transfer_helper
+from aequitas.group import Group
+from aequitas.bias import Bias
+from aequitas.fairness import Fairness
+from aequitas.plotting import Plot
 
 def get_AUC(model, loader=None, dataset=None, num_workers:int=0, num_classes:int=10, zoo_model:str=None):
     """Get Area-Under-Curve Metric on a test dataset. 
@@ -30,12 +27,7 @@ def get_AUC(model, loader=None, dataset=None, num_workers:int=0, num_classes:int
     #print(f"Using device {device}")
 
     # Using PreTrained Model. 
-    if(zoo_model):
-        pretrained_model = transfer_helper(zoo_model)
-        pretrained_model = nn.DataParallel(pretrained_model)
-        pretrained_model = pretrained_model.to(device=device) 
-    else:
-        pretrained_model = None
+    pretrained_model = None
 
     current_model = model
     current_model = nn.DataParallel(current_model)
@@ -105,12 +97,7 @@ def get_sAUC(model, loader=None, dataset=None, num_workers:int=0, num_classes:in
     #print(f"Using device {device}")
 
     # Using PreTrained Model. 
-    if(zoo_model):
-        pretrained_model = transfer_helper(zoo_model)
-        pretrained_model = nn.DataParallel(pretrained_model)
-        pretrained_model = pretrained_model.to(device=device) 
-    else:
-        pretrained_model = None
+    pretrained_model = None
 
     current_model = model
     current_model = nn.DataParallel(current_model)
@@ -206,12 +193,7 @@ def get_sAUC2(model, loader=None, dataset=None, num_workers:int=0, num_classes:i
     #print(f"Using device {device}")
 
     # Using PreTrained Model. 
-    if(zoo_model):
-        pretrained_model = transfer_helper(zoo_model)
-        #pretrained_model = nn.DataParallel(pretrained_model)
-        pretrained_model = pretrained_model.to(device=device) 
-    else:
-        pretrained_model = None
+    pretrained_model = None
 
     current_model = model
     #current_model = nn.DataParallel(current_model)
@@ -235,17 +217,22 @@ def get_sAUC2(model, loader=None, dataset=None, num_workers:int=0, num_classes:i
 
     for index, data in enumerate(loader):
         #print("Running index", index)
-        print(data)
+        #print(data)
         images, labels = data
         images, labels = images.to(device), labels.to(device)
 
-        print("Running index", index)
+        #print("Running index", index)
         if(pretrained_model):
             encodings = pretrained_model(images)
+            probs = current_model.module.predict(encodings)
+
+        else:
+            probs = current_model.module.predict(images)
+
 
         # images, labels = images.to(DEVICE), labels.to(DEVICE)
         #print('Current Model', current_model)
-        probs = current_model.module.predict(encodings)
+        
         # probs = torch.sigmoid(output)
         probability_tensor = torch.cat((probability_tensor, probs), dim=0)
         model_labels = model_labels + labels.tolist()
@@ -455,7 +442,49 @@ def get_sloss(labels:list, s_loss):
             s_loss_dict[key] = [np.mean(value)]
     
     return s_loss_dict
-    
+def evaluate_fairness(preds_df, num_classes, demographic, outcome_pre, outcome_post, demographic_pre, demographic_post):
+    class_labels = [i for i in range(num_classes-1)]
+    bootstraps = list(preds_df['bootstrap'].unique())
+    sample_sizes = [(preds_df['sample_size'].max())]
+    df_list = list()
+    i = 0
+    for current_class_label in class_labels:
+        for bootstrap in bootstraps:
+            for sample_size in sample_sizes:
+                i = i + 1
+                df_subset = preds_df[
+                    (preds_df['bootstrap'] == bootstrap) & (preds_df['sample_size'] == sample_size) 
+                ]
+                df_subset['label_value'] = df_subset['0'] == current_class_label
+                pred_subset = df_subset[[f'{i}' for i in range(1, num_classes+1)]]
+                scores = (pred_subset.idxmax(axis=1)).apply(float)- 1
+                bin_scores = (scores == current_class_label)
+                df_subset['score'] = bin_scores
+                pre_subset_calc = df_subset[
+                    ((df_subset['demographics_train'] == demographic_pre)  & (df_subset['outcome_train'] == outcome_pre) & 
+                    (df_subset['demographics_test'] == demographic) & (df_subset['outcome_test'] == outcome_pre)) 
+
+                ]
+                pre_subset_calc['intervention'] = "Pre"
+                post_subset_calc = df_subset[
+                    ((df_subset['demographics_train'] == demographic_post)  & (df_subset['outcome_train'] == outcome_post) & 
+                    (df_subset['demographics_test'] == demographic) & (df_subset['outcome_test'] == outcome_post)) 
+                ]
+                post_subset_calc['intervention'] = "Post"
+
+                df_subset_calc = pd.concat([pre_subset_calc, post_subset_calc], axis=0)
+                df_subset_calc = df_subset_calc[['label_value', 'score', 'intervention']]
+                g = Group()
+                xtab, _ = g.get_crosstabs(df_subset_calc, attr_cols=['intervention'])
+                xtab['class_label'] = current_class_label
+                xtab['sample_size'] = sample_size
+                df_list.append(xtab)
+    df_all = pd.concat(df_list, axis=0)
+    df_all['Intervention'] = df_all['attribute_value'] 
+    df_all = df_all[['Intervention', 'precision',  'fnr']]
+    return df_all
+
+
 def metric_helper(models, 
     metric_type:str, 
     datasets=None, 

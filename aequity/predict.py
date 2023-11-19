@@ -1,10 +1,17 @@
+import pandas as pd
 import torch.nn as nn
 import torch.optim as optim
+import gc
+import os
+import itertools
 
 from aequity.dataset import custom_helper
 from aequity.models import model_helper
 from aequity.mcse import get_estimators, get_estimands
-from aequity.utils import generate_sample_sizes
+from aequity.utils import generate_sample_sizes, get_mcse_discrete
+import warnings
+warnings.filterwarnings('ignore')
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def measure_disparity_custom(
     dataset_path:str ,
@@ -245,10 +252,17 @@ def mitigate_disparity_custom(
     # Iterate over the training dictionary. 
     dfs = list()
     preds_dfs = list()
+    #print('Train-test', train_test_match)
     for trainset, testset in train_test_match:
+        #print("Trainset", trainset)
+        #print("Testset", testset)
+        
         
         #---- Initialize sample size. 
         for sample_size in sample_sizes:
+            # print("Working on sample size... ", sample_size)
+            # print("Sample sizes", sample_sizes)
+            # print("Number of bootstraps", n_bootstraps)
             
             estimands, preds_df = get_estimands(
                 model = estimand,

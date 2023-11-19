@@ -1,5 +1,8 @@
-sklearn
+scikit-learn
 torch
 scipy
 torchvision
 pandas
+ipykernel
+seaborn
+aequitas

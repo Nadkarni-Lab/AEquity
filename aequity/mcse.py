@@ -1,8 +1,16 @@
 
+import gc
 import pandas as pd
 import torch
+import torch.nn as nn
+import torch.optim as optim
 from torch.utils.data import TensorDataset, random_split
 from aequity.metrics import metric_helper
+from aequity.dataset import weighted_sampler
+
+import warnings
+warnings.filterwarnings('ignore')
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def get_estimators(
@@ -41,7 +49,7 @@ def get_estimators(
     """
 
     # Determine which device is being used. 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu"))
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # Generate zoo models. 
     pretrained_model = None
@@ -273,20 +281,18 @@ def get_estimands(
         list: List of estimation. 
     """
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    print(f"Using device {device}")
-
-    if(zoo_model):
-        pretrained_model = transfer_helper(zoo_model)
-        pretrained_model = pretrained_model.to(device=device) 
-    else:
-        pretrained_model = None
+    # print(f"Using device {device}")
+    
+    pretrained_model = None
 
     # print("Getting estimands")
     models = list()
     model_paths = list()
     metrics = list()
 
+    # print("Number of bootstraps")
     for i in range(bootstraps):
+        # print('Bootstrap', i)
         #print("Running estimands ", i)
         # Create a generator for replicability. 
         #print("Create a generator for replicability.")
@@ -320,20 +326,16 @@ def get_estimands(
 
         # Initialize current model. 
         #print("Initialize current model. ")
-        if(zoo_model == "alexnet"): 
-            current_model = model(input_size=9216)
-        elif(zoo_model == "radimagenet"):
-            current_model = Classifier(num_class=10)
+        
+        if(input_size):
+            if(hidden_size == None):
+                current_model = model(input_size=input_size)
+            elif(hidden_size != None and output_size == None):
+                current_model = model(input_size=input_size, hidden_size_one=hidden_size, hidden_size_two=hidden_size, hidden_size_three=hidden_size)
+            elif(hidden_size != None and output_size != None):
+                current_model = model(input_size=input_size, hidden_size_one=hidden_size, hidden_size_two=hidden_size, hidden_size_three=hidden_size, output_size=output_size)
         else:
-            if(input_size):
-                if(hidden_size == None):
-                    current_model = model(input_size=input_size)
-                elif(hidden_size != None and output_size == None):
-                    current_model = model(input_size=input_size, hidden_size_one=hidden_size, hidden_size_two=hidden_size, hidden_size_three=hidden_size)
-                elif(hidden_size != None and output_size != None):
-                    current_model = model(input_size=input_size, hidden_size_one=hidden_size, hidden_size_two=hidden_size, hidden_size_three=hidden_size, output_size=output_size)
-            else:
-                current_model = model()
+            current_model = model()
         current_model.load_state_dict(torch.load(initial_weights))
 
         # Parallelize current model. 

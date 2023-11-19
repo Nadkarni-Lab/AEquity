@@ -86,15 +86,22 @@ In summary, traditional approaches to the issue of algorithmic bias rely on post
 
 These requirements are publicly sourced such as 
 
-sklearn
+```{bash}
+scikit-learn
 torch
 scipy
 torchvision
 pandas
+ipykernel
+seaborn
+aequitas
+```
 
 ```{bash}
-pip install requirements.txt
-python setup.py install. 
+python -m venv ./aequity-venv
+source aequity-venv/bin/activate
+pip install -r requirements.txt
+python3 setup.py install --user
 ```
 
 2. Setup config file in a config.yaml file. 

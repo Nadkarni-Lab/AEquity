@@ -3,6 +3,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
+def init_xavier(module):
+    if type(module) == nn.Linear:
+        nn.init.xavier_uniform_(module.weight)
+
 class A3(nn.Module):
     """Fully connected network autoencoder. 
     """

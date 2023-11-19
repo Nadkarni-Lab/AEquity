@@ -1,12 +1,24 @@
+from logging import root
 import torch
 import os
 import numpy as np
 import pandas as pd 
+import warnings
 
 from os.path import exists
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import MinMaxScaler
-from torch.utils.data import Dataset, random_split, ConcatDataset, DataLoader
+from torch.utils.data import Dataset, random_split, ConcatDataset, DataLoader, WeightedRandomSampler
+
+warnings.filterwarnings('ignore')
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+def get_labels(subset):
+    labels = list()
+    for index, (X, y) in enumerate(subset):
+        labels.append(y)
+    
+    return labels
 
 def weighted_sampler(subset, mode:str, label_map:dict=None):
     label_map = {
@@ -60,7 +72,7 @@ def weighted_sampler(subset, mode:str, label_map:dict=None):
     return WeightedRandomSampler(samples_weight.type('torch.DoubleTensor'), len(samples_weight))
     
 class CustomDataset(Dataset):
-    """Dataset for Dissecting Datsaet bias
+    """Dataset for Dissecting Dataset bias
 
     Args:
         Dataset: Torch dataset type. 
@@ -78,6 +90,7 @@ class CustomDataset(Dataset):
     
     def __getitem__(self, idx):
         predictors = torch.Tensor(self.inputs.iloc[idx])
+        # predictors = torch.Tensor(self.inputs[idx])
         outcomes = self.targets[idx]
 
         if(self.transform):
@@ -126,6 +139,7 @@ def generate_metadata_file(
     X_df['target'] = outcome_values
 
     # Output path. 
+    if(os.path.exists((root_dir)) == False): os.makedirs(root_dir)
     out_path = os.path.join(root_dir, dataset_label + '.tsv')
     if(exists(out_path) == False): 
         X_df.to_csv(out_path, sep="\t", index=False)
@@ -196,7 +210,7 @@ def custom_helper(
     metadata_dict = {}
     for outcome_col in outcome_cols:
         for demographic in unique_demographics:
-
+            
             # Iterate over a list of unique outcomes for the current outcome column. 
             dataset_label = f'{demographic}__{outcome_col}'
             metadata_dict[dataset_label] = generate_metadata_file(
